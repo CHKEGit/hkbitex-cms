@@ -26,12 +26,38 @@
 		<link rel="stylesheet" href="static/css/datepicker.css" /><!-- 日期框 -->
 		<script type="text/javascript" src="static/js/jquery-1.7.2.js"></script>
 		<script type="text/javascript" src="static/js/jquery.tips.js"></script>
-		
+		<style type="text/css">
+			.yhkxt{color:red}
+		</style>
 <script type="text/javascript">
-	
-	
+	var term ;
+function yourfunction(){
+	var RECEIVING_PAYMENT_BANK = $("#RECEIVING_PAYMENT_BANKN").val();
+	$.ajax({
+		   url:"<%=basePath%>bank/selectByyhk",
+		   type:"GET",
+		   data:{RECEIVING_PAYMENT_BANK:RECEIVING_PAYMENT_BANK},
+		   success:function(data){
+				if(data == 1){
+					term = 1;
+					$("#yhkxt").html("银行卡号已存在");
+				}else if(data == 2){
+					term = 2;
+					$("#yhkxt").html("");
+				}else{
+					alert("未知错误！");
+				} 
+		   },
+            error:function () {
+                alert("错误");
+            }
+		});
+}
 	//保存
 	function save(){
+		if(term == 1){
+			alert("请检查输入是否有误！");
+		}else{
 			if($("#RECEIVING_BANK_NAME").val()==""){
 			$("#RECEIVING_BANK_NAME").tips({
 				side:3,
@@ -106,37 +132,12 @@
 		$("#zhongxin").hide();
 		$("#zhongxin2").show();
 	}
-	
-</script>
-<script type="text/javascript">
-	function yourfunction(){
-		var RECEIVING_PAYMENT_BANK = $("#RECEIVING_PAYMENT_BANKN").val;
-        $.ajax({
-            url: "/selectByyhk",
-            type: "GET",
-            data: {RECEIVING_PAYMENT_BANK:RECEIVING_PAYMENT_BANK},
-            dataType: "json",
-            success:function (data) {
-				if(data == 1){
-					$("#yhkxt").innerText = "该银行卡号已存在！";
-					$("#yhkxt").style.color = "red";
-				}else if(data == 2){
-					$("#yhkxt").innerText = "";
-				}else{
-					alert("未知错误！");
-				}
-            },
-            error:function () {
-                alert("错误");
-            }
-        })
-		
 	}
 </script>
 	</head>
 <body>
 	<form action="bank/${msg }.do" name="Form" id="Form" method="post">
-		<input type="hidden" name="ID" bank_id="bank_id" value="${pd.bank_id}"/>
+		<input type="hidden" name="bank_id" id="bank_id" value="${pd.bank_id}"/>
 		<div id="zhongxin">
 		<table id="table_report" class="table table-striped table-bordered table-hover">
 			<tr>
@@ -146,7 +147,7 @@
 			<tr>
 				<td style="width:70px;text-align: right;padding-top: 13px;">收款银行卡号:</td>
 				<td><input onblur="yourfunction()" type="text" name="RECEIVING_PAYMENT_BANK" id="RECEIVING_PAYMENT_BANKN" value="${pd.RECEIVING_PAYMENT_BANK}" maxlength="32" placeholder="这里输入收款银行卡号" title="收款银行卡号"/>
-				<span id="yhkxt"></span></td>
+				<span id="yhkxt" class="yhkxt"></span></td>
 			</tr>
 			<tr>
 				<td style="width:70px;text-align: right;padding-top: 13px;">收款开户支行:</td>

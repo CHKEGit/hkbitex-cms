@@ -202,19 +202,16 @@ public class BankController extends BaseController {
 	@ResponseBody
 	public Integer selectByyhk(String RECEIVING_PAYMENT_BANK) {
 		logBefore(logger, "判断输入的银行卡号是否在数据库存在");
-		System.out.println("进入方法");
 		PageData pd = new PageData();
 		Integer bol = 0;
 		try{
 			pd = this.getPageData();
 			pd.put("RECEIVING_PAYMENT_BANK",RECEIVING_PAYMENT_BANK);
 			List<PageData> varList = bankService.selectByyhk(pd);
-			if (varList == null) {
+			if (varList.size() != 0) {
 				bol = 1;
-				System.out.println(bol);
 			}else {
 				bol = 2;
-				System.out.println(bol);
 			}
 		} catch (Exception e) {
 			logger.error(e.toString(), e);

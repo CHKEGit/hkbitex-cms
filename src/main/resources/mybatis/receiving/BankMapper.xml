@@ -6,6 +6,7 @@
 	<!-- 新增-->
 	<insert id="save" parameterType="pd">
 		insert into sys_bank(
+			bank_id,	
 			RECEIVING_BANK_NAME,	
 			RECEIVING_PAYMENT_BANK,	
 			RECEIVING_BANK_BRANCH,	
@@ -13,6 +14,7 @@
 			CREATE_TIME,	
 			STATUS
 		) values (
+			#{bank_id},	
 			#{RECEIVING_BANK_NAME},	
 			#{RECEIVING_PAYMENT_BANK},	
 			#{RECEIVING_BANK_BRANCH},	
@@ -67,7 +69,7 @@
 	<select id="selectByyhk" parameterType="page" resultType="pd">
 		select bank_id
 		from sys_bank
-		where RECEIVING_PAYMENT_BANK = #{pd.RECEIVING_PAYMENT_BANK}
+		where RECEIVING_PAYMENT_BANK = #{RECEIVING_PAYMENT_BANK}
 	</select>
 	
 	

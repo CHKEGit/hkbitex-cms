@@ -10,18 +10,69 @@
 	<head>
 	<base href="<%=basePath%>"><!-- jsp文件头和头部 -->
 	<%@ include file="../../system/admin/top.jsp"%> 
-	</head>
-<body>
-		
-<div class="container-fluid" id="main-container">
-
-
-<div id="page-content" class="clearfix">
-						
-  <div class="row-fluid">
-
-	<div class="row-fluid">
+	<style type="text/css">
+	    .btnn{
+	      width:60px;
+	      border-radius: 50px;
+	      border:none;
+	      outline: none;
+	      padding:5px 0;
+	      position: relative;
+	    }
 	
+	    .boxn-i{
+	      border-radius:100%;
+	      background-color: #fff;
+	      position: absolute;
+	      top:15%;
+	      right:55%;
+	      width:20px;
+	      height:20px;
+	    }
+	    .btny{
+	      width:60px;
+	      border-radius: 50px;
+	      background-color: #60b979;
+	      border:none;
+	      outline: none;
+	      padding:5px 0;
+	      position: relative;
+	    }
+	
+	    .boxy-i{
+	      border-radius:100%;
+	      background-color: #fff;
+	      position: absolute;
+	      top:15%;
+	      right:11%;
+	      width:20px;
+	      height:20px;
+	    }
+	</style>
+	<script type="text/javascript" src="static/js/jquery-1.7.2.js"></script>
+	<script type="text/javascript">
+	    function status(obj){
+	    	alert(obj); 
+	    	var status = obj.STATUS;
+	    	alert(status); 
+	        /*if(btnn.classList.contains('on')){
+	          btnn.classList.remove('on');
+	          btnn.style.cssText='background:#ccc;';
+	          boxni.style.cssText='left:11%;';
+	        }else{
+	          btnn.classList.add('on');
+	          btnn.style.cssText='background:#60b979;';
+	          boxni.style.cssText='right:11%;';
+	        }
+	      } */
+	    }
+	  </script>
+	</head>
+<body>	
+<div class="container-fluid" id="main-container">
+<div id="page-content" class="clearfix">		
+  <div class="row-fluid">
+	<div class="row-fluid">
 			<!-- 检索  -->
 			<form action="bank/list.do" method="post" name="Form" id="Form">
 			<table>
@@ -98,14 +149,13 @@
 										<td class="center">${var.UPDATE_TIME}</td>
 										</c:if>
 										<c:if test="${var.STATUS == 1}">
-										<td class="center">启用</td>
+										<td class="center"><button class="btny" onclick="status('${var }')">是&nbsp;&nbsp;&nbsp;&nbsp;否<i class="boxy-i" onclick="status('${var }')"></i></button></td>
 										</c:if>
 										<c:if test="${var.STATUS == 2}">
-										<td class="center">禁用</td>
+										<td class="center"><button class="btnn" onclick="status('${var }')">是&nbsp;&nbsp;&nbsp;&nbsp;否<i class="boxn-i" onclick="status('${var }')"></i></button></td>
 										</c:if>
 								<td style="width: 30px;" class="center">
 									<div class='hidden-phone visible-desktop btn-group'>
-									
 										<c:if test="${QX.edit != 1 && QX.del != 1 }">
 										<span class="label label-large label-grey arrowed-in-right arrowed-in"><i class="icon-lock" title="无权限"></i></span>
 										</c:if>
@@ -123,7 +173,6 @@
 									</div>
 								</td>
 							</tr>
-						
 						</c:forEach>
 						</c:if>
 						<c:if test="${QX.cha == 0 }">
@@ -138,8 +187,6 @@
 						</tr>
 					</c:otherwise>
 				</c:choose>
-					
-				
 				</tbody>
 			</table>
 			
