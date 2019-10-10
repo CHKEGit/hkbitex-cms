@@ -1,4 +1,4 @@
-package com.fh.service.receiving.bank;
+package com.fh.service.sys.bank;
 
 import java.util.List;
 
@@ -29,6 +29,13 @@ public class BankService {
 	*/
 	public void delete(PageData pd)throws Exception{
 		dao.delete("BankMapper.delete", pd);
+	}
+	
+	/*
+	* 修改银行卡状态
+	*/
+	public void updStatus(PageData pd)throws Exception{
+		dao.update("BankMapper.updStatus", pd);
 	}
 	
 	/*

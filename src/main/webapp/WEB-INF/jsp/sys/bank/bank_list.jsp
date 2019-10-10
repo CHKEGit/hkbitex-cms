@@ -51,20 +51,24 @@
 	</style>
 	<script type="text/javascript" src="static/js/jquery-1.7.2.js"></script>
 	<script type="text/javascript">
-	    function status(obj){
-	    	alert(obj); 
-	    	var status = obj.STATUS;
-	    	alert(status); 
-	        /*if(btnn.classList.contains('on')){
-	          btnn.classList.remove('on');
-	          btnn.style.cssText='background:#ccc;';
-	          boxni.style.cssText='left:11%;';
-	        }else{
-	          btnn.classList.add('on');
-	          btnn.style.cssText='background:#60b979;';
-	          boxni.style.cssText='right:11%;';
-	        }
-	      } */
+	    function status(bank_id,istatus){
+	    	var statuss;
+	    	if(istatus == 1){
+	    		statuss = 2;
+	    	}else{
+	    		statuss = 1;
+	    	}
+    		$.ajax({
+    			url:"<%=basePath%>bank/updStatus",
+    			type:"POST",
+    			data:{bank_id:bank_id,
+    				STATUS:statuss},
+    			success:function(data){
+    			},
+    			error:function () {
+    				alert("状态修改错误");
+    			}
+    		});
 	    }
 	  </script>
 	</head>
@@ -149,10 +153,10 @@
 										<td class="center">${var.UPDATE_TIME}</td>
 										</c:if>
 										<c:if test="${var.STATUS == 1}">
-										<td class="center"><button class="btny" onclick="status('${var }')">是&nbsp;&nbsp;&nbsp;&nbsp;否<i class="boxy-i" onclick="status('${var }')"></i></button></td>
+										<td class="center"><button class="btny" onclick="status('${var.bank_id}','${var.STATUS}')">是&nbsp;&nbsp;&nbsp;&nbsp;否<i class="boxy-i"></i></button></td>
 										</c:if>
 										<c:if test="${var.STATUS == 2}">
-										<td class="center"><button class="btnn" onclick="status('${var }')">是&nbsp;&nbsp;&nbsp;&nbsp;否<i class="boxn-i" onclick="status('${var }')"></i></button></td>
+										<td class="center"><button class="btnn" onclick="status('${var.bank_id}','${var.STATUS}')">是&nbsp;&nbsp;&nbsp;&nbsp;否<i class="boxn-i"></i></button></td>
 										</c:if>
 								<td style="width: 30px;" class="center">
 									<div class='hidden-phone visible-desktop btn-group'>

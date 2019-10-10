@@ -31,13 +31,13 @@
 		</style>
 <script type="text/javascript">
 	var term ;
-function yourfunction(){
-	var RECEIVING_PAYMENT_BANK = $("#RECEIVING_PAYMENT_BANKN").val();
-	$.ajax({
-		   url:"<%=basePath%>bank/selectByyhk",
-		   type:"GET",
-		   data:{RECEIVING_PAYMENT_BANK:RECEIVING_PAYMENT_BANK},
-		   success:function(data){
+	function yourfunction(){
+		var RECEIVING_PAYMENT_BANK = $("#RECEIVING_PAYMENT_BANKN").val();
+		$.ajax({
+			url:"<%=basePath%>bank/selectByyhk",
+			type:"GET",
+			data:{RECEIVING_PAYMENT_BANK:RECEIVING_PAYMENT_BANK},
+			success:function(data){
 				if(data == 1){
 					term = 1;
 					$("#yhkxt").html("银行卡号已存在");
@@ -47,12 +47,12 @@ function yourfunction(){
 				}else{
 					alert("未知错误！");
 				} 
-		   },
-            error:function () {
-                alert("错误");
-            }
+			},
+			error:function () {
+				alert("错误");
+			}
 		});
-}
+	}
 	//保存
 	function save(){
 		if(term == 1){

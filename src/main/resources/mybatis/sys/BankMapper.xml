@@ -33,6 +33,16 @@
 	</delete>
 	
 	
+	<!-- 修改状态 -->
+	<update id="updStatus" parameterType="pd">
+		update  sys_bank
+			set 
+				STATUS = #{STATUS}
+			where 
+				bank_id = #{bank_id}
+	</update>
+	
+	
 	<!-- 修改 -->
 	<update id="edit" parameterType="pd">
 		update  sys_bank

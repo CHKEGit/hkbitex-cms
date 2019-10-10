@@ -1,4 +1,4 @@
-package com.fh.controller.receiving.bank;
+package com.fh.controller.sys.bank;
 
 import java.io.PrintWriter;
 import java.text.DateFormat;
@@ -16,15 +16,19 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fh.controller.base.BaseController;
 import com.fh.entity.Page;
+import com.fh.service.sys.bank.BankService;
+import com.fh.service.system.redis.RedisService;
 import com.fh.util.AppUtil;
 import com.fh.util.ObjectExcelView;
 import com.fh.util.Const;
@@ -32,7 +36,6 @@ import com.fh.util.PageData;
 import com.fh.util.Tools;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import com.fh.util.Jurisdiction;
-import com.fh.service.receiving.bank.BankService;
 
 /** 
  * 类名称：BankController
@@ -60,6 +63,9 @@ public class BankController extends BaseController {
 		pd.put("bank_id", this.get32UUID());	//主键
 		pd.put("STATUS", "1");	//状态
 		bankService.save(pd);
+		ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+		RedisService redisService = (RedisService)applicationContext.getBean("redisService");
+		redisService.del("bankList");
 		mv.addObject("msg","success");
 		mv.setViewName("save_result");
 		return mv;
@@ -77,6 +83,9 @@ public class BankController extends BaseController {
 			pd = this.getPageData();
 			bankService.delete(pd);
 			out.write("success");
+			ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+			RedisService redisService = (RedisService)applicationContext.getBean("redisService");
+			redisService.del("bankList");
 			out.close();
 		} catch(Exception e){
 			logger.error(e.toString(), e);
@@ -97,10 +106,12 @@ public class BankController extends BaseController {
 		bankService.edit(pd);
 		mv.addObject("msg","success");
 		mv.setViewName("save_result");
+		ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+		RedisService redisService = (RedisService)applicationContext.getBean("redisService");
+		redisService.del("bankList");
 		return mv;
 	}
-	
-	
+
 	/**
 	 * 去新增页面
 	 */
@@ -111,7 +122,7 @@ public class BankController extends BaseController {
 		PageData pd = new PageData();
 		pd = this.getPageData();
 		try {
-			mv.setViewName("receiving/bank/bank_edit");
+			mv.setViewName("sys/bank/bank_edit");
 			mv.addObject("msg", "save");
 			mv.addObject("pd", pd);
 		} catch (Exception e) {
@@ -131,7 +142,7 @@ public class BankController extends BaseController {
 		pd = this.getPageData();
 		try {
 			pd = bankService.findById(pd);	//根据ID读取
-			mv.setViewName("receiving/bank/bank_edit");
+			mv.setViewName("sys/bank/bank_edit");
 			mv.addObject("msg", "edit");
 			mv.addObject("pd", pd);
 		} catch (Exception e) {
@@ -163,6 +174,9 @@ public class BankController extends BaseController {
 			}
 			pdList.add(pd);
 			map.put("list", pdList);
+			ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+			RedisService redisService = (RedisService)applicationContext.getBean("redisService");
+			redisService.del("bankList");
 		} catch (Exception e) {
 			logger.error(e.toString(), e);
 		} finally {
@@ -171,7 +185,6 @@ public class BankController extends BaseController {
 		return AppUtil.returnObject(pd, map);
 	}
 	
-
 	/**
 	 * 列表
 	 */
@@ -184,15 +197,43 @@ public class BankController extends BaseController {
 		try{
 			pd = this.getPageData();
 			page.setPd(pd);
-			List<PageData>	varList = bankService.list(page);	//列出Bank列表
-			mv.setViewName("receiving/bank/bank_list");
-			mv.addObject("varList", varList);
+			ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+			RedisService redisService = (RedisService)applicationContext.getBean("redisService");
+			if(!(redisService.exists("bankList"))) {//存在即不取
+				List<PageData>	bankList = bankService.list(page);	//列出Bank列表
+				logBefore(logger, "存入redis银行卡信息");
+				redisService.setList("bankList", bankList);//加入缓存--银行卡信息
+				/*
+				 * redisService.expire("bankList",1800);//设置缓存时间，单位秒
+				 */			}
+			mv.setViewName("sys/bank/bank_list");
+			List<PageData> bankList =redisService.getList("bankList", PageData.class);
+			mv.addObject("varList", bankList);
 			mv.addObject("pd", pd);
 			mv.addObject(Const.SESSION_QX,this.getHC());	//按钮权限
 		} catch(Exception e){
 			logger.error(e.toString(), e);
 		}
 		return mv;
+	}
+	
+	/**
+	 * 修改状态
+	 */
+	@RequestMapping(value="/updStatus")
+	@ResponseBody
+	public Integer updStatus(String bank_id,String STATUS) throws Exception{
+		logBefore(logger, "修改status");
+		if(!Jurisdiction.buttonJurisdiction(menuUrl, "edit")){return null;} //校验权限
+		PageData pd = new PageData();
+		pd = this.getPageData();
+		pd.put("bank_id",bank_id);
+		pd.put("STATUS",STATUS);
+		bankService.updStatus(pd);
+		ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+		RedisService redisService = (RedisService)applicationContext.getBean("redisService");
+		redisService.del("bankList");
+		return 1;
 	}
 	
 	/**
