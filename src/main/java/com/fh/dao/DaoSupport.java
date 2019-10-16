@@ -28,7 +28,7 @@ public class DaoSupport implements DAO {
 	}
 	
 	/**
-	 * 批量更新
+	 * 批量增加
 	 * @param str
 	 * @param obj
 	 * @return
@@ -75,7 +75,7 @@ public class DaoSupport implements DAO {
 	}
 	
 	/**
-	 * 批量更新
+	 * 批量删除
 	 * @param str
 	 * @param obj
 	 * @return
